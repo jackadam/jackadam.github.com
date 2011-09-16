@@ -1,0 +1,80 @@
+--- 
+layout: post
+title: JPEGs with Alpha Channels?!?
+tags: []
+
+status: publish
+type: post
+published: true
+meta: 
+  _edit_last: "2"
+  _wp_old_slug: ""
+---
+<em>I wanted a reasonably sized photographic image with a 24-bit alpha channel. So I used a JPEG for what JPEGs are good for and a PNG for what PNGs are good for...</em>
+
+I combined them using an HTML5 <code>canvas</code> element and then inserted into the DOM. The results look the same as using a normal 24-bit PNG but are one-half to one-sixth the size. In one case we got a 573KB 24-bit PNG down to a 49KB JPEG with a 4KB PNG alpha-mask!
+
+On a recent project I did this using jQuery and scanning the CSS for <code>background-images</code>, but this could easily be achieved without any special CSS using valid HTML5 syntax by referring to a normal JPEG throug the <code>src</code> of an <code>img</code> element and adding a new <code>data-alpha-src</code> attribute with the URL of a 24-bit PNG that is just a mask.
+
+<code>&lt;img src="image.jpg" data-alpha-src="alpha.png" /&gt;</code>
+
+<a href="http://demos.jackadam.net/alpha_jpeg/">This little demo</a> ((<em>Plastics</em> trucker hats are available from <a href="http://www.cafepress.com/americorp">Americorp</a>.)) works in the newest versions of Firefox, Chrome, and Safari (including Safari for iOS). For Internet Explorer support, I used the wonderful <a href="http://flashcanvas.net">FlashCanvas</a> ((This technique uses the <code>globalCompositeOperation</code> operation, which requires FlashCanvas Pro. Free for non-profit use or just $31 for a commercial license.)). It's fine in IE8 but it's inconsistent in IE7. This might be solved by waiting for DOM to be ready. At the time of this writing the IE9 beta <a href="http://ie.microsoft.com/testdrive/info/ReleaseNotes/Default.html#WhatsNew">does not support <code>globalCompositeOperation</code></a>, so we'll have to wait and see.
+
+Recently we've taken on two different projects that involve lots of large sprites being animated around landscapes. Normally sites like this (we typically see them done in Flash) necessitate painful loading screens. By using this JPEG-alpha trick we should be able to keep load times to a minimum.
+
+Here is the JavaScript code from the demo:
+
+<pre><code>;(function() {
+
+  var create_alpha_jpeg = function(img) {
+
+    var alpha_path = img.getAttribute('data-alpha-src')
+    if(!alpha_path) return
+
+    // Hide the original un-alpha'd
+    img.style.visiblity = 'hidden'
+
+    // Preload the un-alpha'd image
+    var image = document.createElement('img')
+    image.src = img.src
+    image.onload = function () {
+
+      // Then preload alpha mask
+      var alpha = document.createElement('img')
+      alpha.src = alpha_path
+      alpha.onload = function () {
+
+        var canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        img.parentNode.replaceChild(canvas, img)
+
+        // For IE7/8
+        if(typeof FlashCanvas != 'undefined') FlashCanvas.initElement(canvas)
+
+        // Canvas compositing code
+        var context = canvas.getContext('2d')
+        context.clearRect(0, 0, image.width, image.height)
+        context.drawImage(image, 0, 0, image.width, image.height)
+        context.globalCompositeOperation = 'xor'
+        context.drawImage(alpha, 0, 0, image.width, image.height)
+
+      }
+    }
+  }
+
+  // Apply this technique to every image on the page once DOM is ready
+  // (I just placed it at the bottom of the page for brevity)
+  var imgs = document.getElementsByTagName('img')
+  for(var i = 0; i &lt; imgs.length; i++)
+    create_alpha_jpeg(imgs[i])
+
+})();</code></pre>
+
+In the <code>head</code> element I linked to FlashCanvas:
+
+<pre><code>&lt;!--[if lte IE 8]&gt;&lt;script src="flashcanvas.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;</code></pre>
+
+... and I threw in this to avoid a flicker of the un-alpha'd JPEG:
+
+<pre><code>&lt;style&gt;img[data-alpha-src]{visibility: hidden;}&lt;/style&gt;</code></pre>

@@ -1,0 +1,73 @@
+--- 
+layout: post
+title: 3D Rotating Molecules on the iPhone/iPad
+tags: []
+
+status: publish
+type: post
+published: true
+meta: 
+  _edit_last: "3"
+  _wp_old_slug: ""
+---
+<a href="http://demos.jackadam.net/webkit_molecule/"><img src="http://blog.jackadam.net/wp-content/uploads/2010/10/molecule.png" alt="" title="molecule" width="650" height="372" class="alignnone size-full wp-image-81" /></a>
+
+Turns out, <a href="http://blog.jackadam.net/?p=59">canvas kinda sucks</a> for developing full-screen animations on the iPhone and iPad. Without hardware acceleration and a more efficient clearing mechanism, it just doesn't cut the mustard.
+
+But all hope is not lost... CSS 3D transforms to the rescue!
+
+Check out this <a href="http://demos.jackadam.net/webkit_molecule/">3D molecule simulation</a> we put together:
+
+<iframe src="http://player.vimeo.com/video/16280629" width="640" height="360" frameborder="0"></iframe>
+
+You can rotate the molecule around with your fingers, and pinch to zoom in and out. At blisteringly high frame rates. <a href="http://demos.jackadam.net/webkit_molecule/">Try it out</a> yourself.
+
+(It currently works on iOS devices, Safari, and the latest dev version of Chrome... basically, any browser that supports true CSS 3D transformations / animations.)
+
+So how does it work?
+
+Take a gander at this <a href="http://demos.jackadam.net/rotation/1.html">simplified example</a>, consisting of four rotating circles:
+
+<a href="http://demos.jackadam.net/rotation/1.html"><img src="http://blog.jackadam.net/wp-content/uploads/2010/10/rotation1.jpg" alt="" title="rotation1" width="650" height="366" class="alignnone size-full wp-image-73" /></a>
+
+We apply the following CSS animation to the container holding the circles...
+
+<pre><code>#container {
+    [...]
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 4s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    }
+    
+@-webkit-keyframes spin {
+    0%    { -webkit-transform: rotateY(0deg); }
+    100%  { -webkit-transform: rotateY(360deg); }
+    }</code></pre>
+
+Which tells the container to spin around the y-axis perpetually. Notice, however, that the circles don't look like three-dimensional spheres... instead, they appear as flat circles painting onto the plane of the container. In order to simulate the atoms of a molecule, we need honest-to-goodness 3D balls.
+
+To accomplish this in CSS, we take advantage of a technique called "billboarding". Billboarding involves rotating an object (in our case, each of the colored balls), in such as way that it remains facing directly at the camera at all times. This is a fairly common technique in the world of 3D gaming, used to render things such as trees and grass -- and in our case, it gives the illusion that the circles are really spheres.
+
+Now, there isn't any built-in method for billboarding an object using CSS 3D transforms, but its easy to fake: We simply need to rotate each circle individually in the <em>opposite direction</em> from the rotation of the parent container. We do this by defining an equal-but-opposite CSS animation, and apply it to the balls:
+
+<pre><code>.ball {
+    [...]
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation-name: reverse-spin;
+    -webkit-animation-duration: 4s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    }
+    
+@-webkit-keyframes reverse-spin {
+    0%    { -webkit-transform: rotateY(360deg); }
+    100%  { -webkit-transform: rotateY(0deg); }
+    }</code></pre>
+
+Notice that the reverse-spin animation starts at 360 degrees and ends at 0 degrees, whereas the original spin animation was the opposite. Ta da! The results can be <a href="http://demos.jackadam.net/rotation/2.html">seen here</a>:
+
+<a href="http://demos.jackadam.net/rotation/2.html"><img src="http://blog.jackadam.net/wp-content/uploads/2010/10/rotation2.jpg" alt="" title="rotation2" width="650" height="366" class="alignnone size-full wp-image-74" /></a>
+
+Things become a little more complicated when it comes to arbitrary rotations about multiple axes in response to touch gestures (as seen in the molecule demo), but you get the idea! Pretty neat, huh?

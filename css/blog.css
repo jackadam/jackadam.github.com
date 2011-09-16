@@ -1,0 +1,62 @@
+* {
+    margin:             0;
+    padding:            0;
+    }
+
+/* Avoiding flash of unstyled text in FF and IE */
+.wf-loading h1, .wf-loading h2, .wf-loading p {
+    visibility: hidden;
+    }
+
+.wf-active h1, .wf-active h2, .wf-active p,
+.wf-inactive h1, .wf-inactive h2, .wf-inactive p {
+    visibility: visible;
+    }
+
+body {
+    margin: 0 auto;
+    width: 680px;
+    color: #333;
+    font-size: 16px;
+    line-height: 24px;
+    }
+
+h1, h2, h3, h4, h5,h6 {
+    clear: both;
+    font-weight: normal;
+    font-family: "ff-enzo-web-1","ff-enzo-web-2",sans-serif;
+    }
+
+article p, article ul, article ol, article dd, article pre, article hr {
+    margin-bottom: 24px;
+    }
+
+body,
+input,
+textarea,
+article h2 {
+    font-family: "ff-meta-serif-web-pro-1","ff-meta-serif-web-pro-2", Georgia, "Bitstream Charter", serif;
+    }
+
+pre {
+    font-family: "Courier 10 Pitch", Courier, monospace;
+    }
+
+code {
+    font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+    }
+
+header h1 {
+    line-height: 36px;
+    margin-bottom: 18px;
+    font-family: "ff-enzo-web-1","ff-enzo-web-2",sans-serif;
+    font-size: 48px;
+    font-weight: bold;
+    -webkit-text-stroke: 1px transparent;
+    }
+
+header h1,
+header h1 a {
+    text-decoration: none;
+    color: #DDD;
+    }
