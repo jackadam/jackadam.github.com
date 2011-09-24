@@ -23,11 +23,14 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     clear: both;
-    font-weight: normal;
     font-family: "ff-enzo-web-1","ff-enzo-web-2",sans-serif;
     }
 
-h2, h3, h4, h5, h6 {
+h1, h2 {
+    font-weight: normal;
+    }
+
+h2 {
     margin-bottom: 20px;
     color: #000;
     line-height: 1.1em;
