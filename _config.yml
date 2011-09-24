@@ -1,2 +1,3 @@
 permalink: /:year/:title/
-url: http://jackadam.github.com:4000
+url: http://jackadam.github.com
+auto: true

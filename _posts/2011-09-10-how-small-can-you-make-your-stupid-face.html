@@ -3,76 +3,42 @@ layout: post
 title: How Small Can You Make Your Stupid Face?
 status: publish
 type: post
+author: Adam Grossman
 published: true
 ---
 <h2>Using High-Falutin' Computer Vision Algorithms for<br />Quantitative Face Reduction Analysis</h2>
-
-When we saw this clip from the first episode of Workaholics on Comedy Central, it made us mad:
-
-<iframe width="640" height="390" src="http://www.youtube.com/embed/tV4M7Bz79E8?rel=0&amp;hd=1" frameborder="0" allowfullscreen></iframe>
-
-Here you have an individual who is asked to judge which of his friends can make the smaller face, but instead of taking this task seriously he hastily declares a winner based on scant evidence and with no discernible justification!
-
-What does it say about the human race as a tool-building species that we still -- after centuries of technological progress -- have no means of <em>objectively</em> quantifying a person's face reduction aptitude?
-
-Videos such as this simply perpetuate (dare we say, celebrate?) a lack of scientific rigor.
-
-This will not stand. Jack and I knew we had to do something. So we built <a href="http://tinyfaceapp.com">Tiny Face</a>, the world's first mobile app for scientifically determining one's face reduction percentage.
-
-How it works is simple: The user is prompted to make their normal face followed by their tiny face, and the app then computes how much smaller the latter is compared to the former. It's not about <em>absolute</em> face size, but rather how much smaller you can compress your face relative to your baseline "normal" face. Here's an example output:
-
-<img src="http://my.tinyfac.es/1r.jpg" style="width:480px" class="aligncenter" />
-
-How does it work?
-
+<p>When we saw this clip from the first episode of Workaholics on Comedy Central, it made us mad:</p>
+<p><iframe width="640" height="390" src="http://www.youtube.com/embed/tV4M7Bz79E8?rel=0&amp;hd=1" frameborder="0" allowfullscreen></iframe></p>
+<p>Here you have an individual who is asked to judge which of his friends can make the smaller face, but instead of taking this task seriously he hastily declares a winner based on scant evidence and with no discernible justification!</p>
+<p>What does it say about the human race as a tool-building species that we still -- after centuries of technological progress -- have no means of <em>objectively</em> quantifying a person's face reduction aptitude?</p>
+<p>Videos such as this simply perpetuate (dare we say, celebrate?) a lack of scientific rigor.</p>
+<p>This will not stand. Jack and I knew we had to do something. So we built <a href="http://tinyfaceapp.com">Tiny Face</a>, the world's first mobile app for scientifically determining one's face reduction percentage.</p>
+<p>How it works is simple: The user is prompted to make their normal face followed by their tiny face, and the app then computes how much smaller the latter is compared to the former. It's not about <em>absolute</em> face size, but rather how much smaller you can compress your face relative to your baseline "normal" face. Here's an example output:</p>
+<p><img src="http://my.tinyfac.es/1r.jpg" style="width:480px" class="aligncenter" /></p>
+<p>How does it work?</p>
 <h2>Face Detection</h2>
-
-Face detection algorithms have been around for a while. We use <a href="http://opencv.willowgarage.com/wiki/">OpenCV</a>, an open-source library of computer vision algorithms (written in C, and easily <a href="http://www.eosgarden.com/en/opensource/opencv-ios/documentation/tutorial/">compiled for the iPhone</a>), to detect faces in the input image.
-
-<img src="http://blog.jackadam.net/wp-content/uploads/2011/09/1.jpg" class="aligncenter" />
-
-It's pretty easy to use, since other people have done the hard work of training these magical algorithmic gizmos called <a href="http://en.wikipedia.org/wiki/Haar-like_features">Haar Classifiers</a> using collections of thousands of sample faces. We simply took this classifier and fed it into OpenCV along with the input image, and out comes a bounding box around any faces! Like magic!
-
-By doing this for both the normal face and the scrunched face, we get two bounding boxes whose areas we can compare to figure out how much smaller the face has become:
-
-<img src="http://blog.jackadam.net/wp-content/uploads/2011/09/3.jpg" class="aligncenter" />
-
+<p>Face detection algorithms have been around for a while. We use <a href="http://opencv.willowgarage.com/wiki/">OpenCV</a>, an open-source library of computer vision algorithms (written in C, and easily <a href="http://www.eosgarden.com/en/opensource/opencv-ios/documentation/tutorial/">compiled for the iPhone</a>), to detect faces in the input image.</p>
+<p><img src="/images/tiny-face/1.jpg" class="aligncenter" /></p>
+<p>It's pretty easy to use, since other people have done the hard work of training these magical algorithmic gizmos called <a href="http://en.wikipedia.org/wiki/Haar-like_features">Haar Classifiers</a> using collections of thousands of sample faces. We simply took this classifier and fed it into OpenCV along with the input image, and out comes a bounding box around any faces! Like magic!</p>
+<p>By doing this for both the normal face and the scrunched face, we get two bounding boxes whose areas we can compare to figure out how much smaller the face has become:</p>
+<p><img src="/images/tiny-face/3.jpg" class="aligncenter" /></p>
 <h2>Not So Fast!</h2>
-
-This method only works in tightly controlled situations where the user and camera are stationary, and the only thing that changes is the face. But if we were to turn this into an iPhone app, we'd have to deal with the real-world where we can't expect people to hold themselves and the phone still.
-
-The problem with simply comparing the bounding boxes of the normal and tiny faces is that moving the camera closer or father away results in unacceptable errors due to perspective scaling. For example:
-
-<img src="http://blog.jackadam.net/wp-content/uploads/2011/09/4.jpg" class="aligncenter" />
-
-We <em>could</em> just ask users to keep their camera and face steady. But, as any software developer can tell you, most users are terrible awful cheating sons-of-bitches (haha! We love our users!).
-
-So how do we correct for this?
-
+<p>This method only works in tightly controlled situations where the user and camera are stationary, and the only thing that changes is the face. But if we were to turn this into an iPhone app, we'd have to deal with the real-world where we can't expect people to hold themselves and the phone still.</p>
+<p>The problem with simply comparing the bounding boxes of the normal and tiny faces is that moving the camera closer or father away results in unacceptable errors due to perspective scaling. For example:</p>
+<p><img src="/images/tiny-face/4.jpg" class="aligncenter" /></p>
+<p>We <em>could</em> just ask users to keep their camera and face steady. But, as any software developer can tell you, most users are terrible awful cheating sons-of-bitches (haha! We love our users!).</p>
+<p>So how do we correct for this?</p>
 <h2>Feature Tracking</h2>
-
-If we knew the distance from the camera to the face in both images, we could compensate for perspective. Unfortunately, there's no way to get the <em>absolute</em> distance from each image alone (until the iPhone comes equipped with 3D camera or laser range-finder).
-
-But we can <em>compare</em> the two images, and employ a nifty trick:
-
-Take a look at the photos above. In the before and after images she's changed the size of her face, but other aspects of her head / body are unaltered. These include her hairline, the shape of her head, shoulders, clothing, freckles, jewelry, etc.
-
-If we can identify these features in both images, we can compare how their sizes and positions differ and compute the <em>relative</em> change in scale between them.
-
-Fortunately, OpenCV comes with <a href="http://robots.stanford.edu/cs223b05/notes/CS%20223-B%20T1%20stavens_opencv_optical_flow.pdf">neat ways</a> to identify and track features from one image to the next. Using the position of the face, we can draw a box around the likely location of the entire head and body, and then run these algorithms to find features in common:
-
-<img src="http://blog.jackadam.net/wp-content/uploads/2011/09/6.jpg" class="aligncenter" />
-
-By then comparing the distance between these points in both images, we can calculate by how much the camera has moved closer or farther away, and compensate accordingly. Presto!
-
-Actually, while this works in theory, it doesn't always work in practice. In our tests we found that users move around quite a bit between images, leading to inconsistent lighting, blurring, and all sorts of similar nastiness.
-
-In fact, we weren't able to find a single feature tracking algorithm that could handle all these situations. So we resorted to using multiple ones, including the <a href="http://en.wikipedia.org/wiki/Lucas%E2%80%93Kanade_method">Lucas-Kanade method</a> and <a href="http://www.aishack.in/2010/05/sift-scale-invariant-feature-transform/">SIFT - Scale Invariant Feature Transform</a>.
-
-We run them all (after passing the images through various cleaning stages), and then "sanity check" the resulting numbers to determine which results are likely to be most accurate.
-
-So there you go. After countless hours of tweaking numbers and nearly spraining our faces generating hundreds of test images, we'd got ourselves our very first iOS app!
-
-You can check out user-submitted faces at <a href="http://tinyfaceapp.com">Tiny Face website</a> and buy the app -- <em> only 99¢!</em> -- from the <a href="http://itunes.apple.com/us/app/tiny-face/id461812078?ls=1&mt=8">App Store</a> for the iPhone 4, iPod touch and iPad 2.
-
-<em style="color:#AA0000">WARNING FROM YOUR MOM: Prolonged use of this app can cause your face to freeze like that, young lady.</em>
+<p>If we knew the distance from the camera to the face in both images, we could compensate for perspective. Unfortunately, there's no way to get the <em>absolute</em> distance from each image alone (until the iPhone comes equipped with 3D camera or laser range-finder).</p>
+<p>But we can <em>compare</em> the two images, and employ a nifty trick:</p>
+<p>Take a look at the photos above. In the before and after images she's changed the size of her face, but other aspects of her head / body are unaltered. These include her hairline, the shape of her head, shoulders, clothing, freckles, jewelry, etc.</p>
+<p>If we can identify these features in both images, we can compare how their sizes and positions differ and compute the <em>relative</em> change in scale between them.</p>
+<p>Fortunately, OpenCV comes with <a href="http://robots.stanford.edu/cs223b05/notes/CS%20223-B%20T1%20stavens_opencv_optical_flow.pdf">neat ways</a> to identify and track features from one image to the next. Using the position of the face, we can draw a box around the likely location of the entire head and body, and then run these algorithms to find features in common:</p>
+<p><img src="/images/tiny-face/6.jpg" class="aligncenter" /></p>
+<p>By then comparing the distance between these points in both images, we can calculate by how much the camera has moved closer or farther away, and compensate accordingly. Presto!</p>
+<p>Actually, while this works in theory, it doesn't always work in practice. In our tests we found that users move around quite a bit between images, leading to inconsistent lighting, blurring, and all sorts of similar nastiness.</p>
+<p>In fact, we weren't able to find a single feature tracking algorithm that could handle all these situations. So we resorted to using multiple ones, including the <a href="http://en.wikipedia.org/wiki/Lucas%E2%80%93Kanade_method">Lucas-Kanade method</a> and <a href="http://www.aishack.in/2010/05/sift-scale-invariant-feature-transform/">SIFT - Scale Invariant Feature Transform</a>.</p>
+<p>We run them all (after passing the images through various cleaning stages), and then "sanity check" the resulting numbers to determine which results are likely to be most accurate.</p>
+<p>So there you go. After countless hours of tweaking numbers and nearly spraining our faces generating hundreds of test images, we'd got ourselves our very first iOS app!</p>
+<p>You can check out user-submitted faces at <a href="http://tinyfaceapp.com">Tiny Face website</a> and buy the app -- <em> only 99¢!</em> -- from the <a href="http://itunes.apple.com/us/app/tiny-face/id461812078?ls=1&mt=8">App Store</a> for the iPhone 4, iPod touch and iPad 2.</p>
+<p><em style="color:#AA0000">WARNING FROM YOUR MOM: Prolonged use of this app can cause your face to freeze like that, young lady.</em></p>

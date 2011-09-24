@@ -1,12 +1,12 @@
 --- 
 layout: post
-title: "Happy \xCF\x80 Day!"
+title: "Happy π Day!"
 status: future
 type: post
+author: Jack Turner
 published: false
 ---
-In honor of international π-day, here is a three hundred and fourteen byte JavaScript snippet Adam and I wrote a few years back that should reenable the functionality of the <code>blink</code> tag on any page:
-
+<p>In honor of international π-day, here is a three hundred and fourteen byte JavaScript snippet Adam and I wrote a few years back that should reenable the functionality of the <code>blink</code> tag on any page:</p>
 <pre><code>(function(){
   b = document.getElementsByTagName('blink');
   for(i=0;i < b.length;i++) b[i].style.textDecoration = 'none';
@@ -16,9 +16,7 @@ In honor of international π-day, here is a three hundred and fourteen byte Java
   }
   ch('visible', 750, 'hidden', 250);
 })()</code></pre>
-
-The one cool thing about this code is that recreates the exact blinking interval that I remember from Netscape. <a href="http://demos.jackadam.net/blink/">Here's a demo page</a>, though <blink>this should be blinking for you right now</blink>.
-
+<p>The one cool thing about this code is that recreates the exact blinking interval that I remember from Netscape. <a href="http://demos.jackadam.net/blink/">Here's a demo page</a>, though <blink>this should be blinking for you right now</blink>.</p>
 <script>(function(){
   b = document.getElementsByTagName('blink');
   for(i=0; i<b.length; i++) b[i].style.textDecoration = 'none';

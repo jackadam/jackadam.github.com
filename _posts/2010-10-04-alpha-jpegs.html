@@ -3,22 +3,16 @@ layout: post
 title: JPEGs with Alpha Channels?!?
 status: publish
 type: post
+author: Jack Turner
 published: true
 ---
-<em>I wanted a reasonably sized photographic image with a 24-bit alpha channel. So I used a JPEG for what JPEGs are good for and a PNG for what PNGs are good for...</em>
-
-I combined them using an HTML5 <code>canvas</code> element and then inserted into the DOM. The results look the same as using a normal 24-bit PNG but are one-half to one-sixth the size. In one case we got a 573KB 24-bit PNG down to a 49KB JPEG with a 4KB PNG alpha-mask!
-
-On a recent project I did this using jQuery and scanning the CSS for <code>background-images</code>, but this could easily be achieved without any special CSS using valid HTML5 syntax by referring to a normal JPEG throug the <code>src</code> of an <code>img</code> element and adding a new <code>data-alpha-src</code> attribute with the URL of a 24-bit PNG that is just a mask.
-
-<code>&lt;img src="image.jpg" data-alpha-src="alpha.png" /&gt;</code>
-
-<a href="http://demos.jackadam.net/alpha_jpeg/">This little demo</a> ((<em>Plastics</em> trucker hats are available from <a href="http://www.cafepress.com/americorp">Americorp</a>.)) works in the newest versions of Firefox, Chrome, and Safari (including Safari for iOS). For Internet Explorer support, I used the wonderful <a href="http://flashcanvas.net">FlashCanvas</a> ((This technique uses the <code>globalCompositeOperation</code> operation, which requires FlashCanvas Pro. Free for non-profit use or just $31 for a commercial license.)). It's fine in IE8 but it's inconsistent in IE7. This might be solved by waiting for DOM to be ready. At the time of this writing the IE9 beta <a href="http://ie.microsoft.com/testdrive/info/ReleaseNotes/Default.html#WhatsNew">does not support <code>globalCompositeOperation</code></a>, so we'll have to wait and see.
-
-Recently we've taken on two different projects that involve lots of large sprites being animated around landscapes. Normally sites like this (we typically see them done in Flash) necessitate painful loading screens. By using this JPEG-alpha trick we should be able to keep load times to a minimum.
-
-Here is the JavaScript code from the demo:
-
+<p><em>I wanted a reasonably sized photographic image with a 24-bit alpha channel. So I used a JPEG for what JPEGs are good for and a PNG for what PNGs are good for...</em></p>
+<p>I combined them using an HTML5 <code>canvas</code> element and then inserted into the DOM. The results look the same as using a normal 24-bit PNG but are one-half to one-sixth the size. In one case we got a 573KB 24-bit PNG down to a 49KB JPEG with a 4KB PNG alpha-mask!</p>
+<p>On a recent project I did this using jQuery and scanning the CSS for <code>background-images</code>, but this could easily be achieved without any special CSS using valid HTML5 syntax by referring to a normal JPEG throug the <code>src</code> of an <code>img</code> element and adding a new <code>data-alpha-src</code> attribute with the URL of a 24-bit PNG that is just a mask.</p>
+<p><code>&lt;img src="image.jpg" data-alpha-src="alpha.png" /&gt;</code></p>
+<p><a href="http://demos.jackadam.net/alpha_jpeg/">This little demo</a><sup><a href="#footnote_0_7" id="identifier_0_7" class="footnote-link footnote-identifier-link" title="Plastics trucker hats are available from Americorp.">1</a></sup> ((<em>Plastics</em> trucker hats are available from <a href="http://www.cafepress.com/americorp">Americorp</a>.)) works in the newest versions of Firefox, Chrome, and Safari (including Safari for iOS). For Internet Explorer support, I used the wonderful <a href="http://flashcanvas.net">FlashCanvas</a><sup><a href="#footnote_1_7" id="identifier_1_7" class="footnote-link footnote-identifier-link" title="This technique uses the globalCompositeOperation operation, which requires FlashCanvas Pro. Free for non-profit use or just $31 for a commercial license.">2</a></sup> ((This technique uses the <code>globalCompositeOperation</code> operation, which requires FlashCanvas Pro. Free for non-profit use or just $31 for a commercial license.)). It's fine in IE8 but it's inconsistent in IE7. This might be solved by waiting for DOM to be ready. At the time of this writing the IE9 beta <a href="http://ie.microsoft.com/testdrive/info/ReleaseNotes/Default.html#WhatsNew">does not support <code>globalCompositeOperation</code></a>, so we'll have to wait and see.</p>
+<p>Recently we've taken on two different projects that involve lots of large sprites being animated around landscapes. Normally sites like this (we typically see them done in Flash) necessitate painful loading screens. By using this JPEG-alpha trick we should be able to keep load times to a minimum.</p>
+<p>Here is the JavaScript code from the demo:</p>
 <pre><code>;(function() {
 
   var create_alpha_jpeg = function(img) {
@@ -65,11 +59,12 @@ Here is the JavaScript code from the demo:
     create_alpha_jpeg(imgs[i])
 
 })();</code></pre>
-
-In the <code>head</code> element I linked to FlashCanvas:
-
+<p>In the <code>head</code> element I linked to FlashCanvas:</p>
 <pre><code>&lt;!--[if lte IE 8]&gt;&lt;script src="flashcanvas.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;</code></pre>
-
-... and I threw in this to avoid a flicker of the un-alpha'd JPEG:
-
+<p>... and I threw in this to avoid a flicker of the un-alpha'd JPEG:</p>
 <pre><code>&lt;style&gt;img[data-alpha-src]{visibility: hidden;}&lt;/style&gt;</code></pre>
+
+<ol class="footnotes">
+<li id="footnote_0_7" class="footnote"><em>Plastics</em> trucker hats are available from <a href="http://www.cafepress.com/americorp">Americorp</a>. [<a href="#identifier_0_7" class="footnote-link footnote-back-link">&#8617;</a>]</li>
+<li id="footnote_1_7" class="footnote">This technique uses the <code>globalCompositeOperation</code> operation, which requires FlashCanvas Pro. Free for non-profit use or just $31 for a commercial license. [<a href="#identifier_1_7" class="footnote-link footnote-back-link">&#8617;</a>]</li>
+</ol>
