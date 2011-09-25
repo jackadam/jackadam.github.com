@@ -15,10 +15,16 @@
 
 body {
     margin: 90px auto 60px;
-    width: 680px;
+    padding: 0 8px;
+    max-width: 680px;
     color: #333;
     font-size: 16px;
     line-height: 24px;
+    -webkit-text-size-adjust: 85%;
+    }
+
+img, iframe, object, embed {
+    max-width: 100%;
     }
 
 h1, h2, h3, h4, h5, h6 {
@@ -87,6 +93,7 @@ pre {
     color: #222;
     font-size: 12px;
     line-height: 1.6;
+    overflow: auto;
     }
 
 code {
