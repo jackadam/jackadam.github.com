@@ -1,4 +1,4 @@
 permalink: /:year/:title/
-url: http://jackadam.github.com
+url: http://blog.jackadam.net
 auto: true
 pygments: true
