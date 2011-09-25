@@ -8,15 +8,15 @@ published: true
 ---
 <p>Over the next several months, Jack and I will be building a series of fun little interactive online games for a client. In years past, these type of (animation-heavy) games would have undoubtedly been built in Flash. Our client, however, is forward-thinking enough to let us try ditching Flash and implementing them all with HTML / CSS / JS (a.k.a. “HTML5”).</p>
 <p>Part of the rationale of moving away from Flash is that we want (at least some of) these games to be playable on the iPad and iPhone. The target demographic is younger school-age kids, and the iPad is poised to <a href="http://speirs.org/blog/2010/10/1/ipad-apps-for-primary.html">take off</a> in that space.</p>
-<p>Now, when it comes to building rich, graphical, animated games in HTML5, the obvious first step is to investigate Canvas. We've done so, and we've come to a couple conclusions:</p>
+<p>Now, when it comes to building rich, graphical, animated games in HTML5, the obvious first step is to investigate Canvas. We’ve done so, and we’ve come to a couple conclusions:</p>
 <ol>
   <li><strong>Canvas is entirely unsuited to generating full-screen animations on any iOS device. The frame-rates are unacceptably low.</strong></li>
   <li><strong>Clearing the canvas between frames is surprisingly expensive.</strong></li>
 </ol>
-<p>Here's the test I used, so you can try it out yourself:<br />
+<p>Here’s the test I used, so you can try it out yourself:<br />
 <a href="http://demos.jackadam.net/canvas_test/">http://demos.jackadam.net/canvas_test</a></p>
-<p>It's pretty much the simplest animation you can perform with canvas... drawing a single circle moving across the screen.</p>
-<p>If you don't have an iPhone / iPad, here's a video of the test in action:</p>
+<p>It’s pretty much the simplest animation you can perform with canvas... drawing a single circle moving across the screen.</p>
+<p>If you don’t have an iPhone / iPad, here’s a video of the test in action:</p>
 <p><iframe src="http://player.vimeo.com/video/16280618" width="640" height="360" frameborder="0"></iframe></p>
 <p>As you can see, frame-rates on the iPad vary from "unacceptably bad" at fullscreen to "okay, I guess" at the relatively tiny resolution of 250x250.</p>
 <p>And notice how much snappier the animation becomes when we stop clearing the canvas between frames! Canvas was originally designed to generate static images, not animations, and the standard canvas clearing method (calling <code>ctx.clearRect(0, 0, width, height)</code>) appears to be quite expensive.</p>
@@ -24,10 +24,10 @@ published: true
 <ul>
   <li>Creating an empty canvas on page load, grabbing its contents with <code>getImageData</code> and sending it to the canvas on the page with <code>putImageData</code>.</li>
   <li>Replacing the canvas element with a new one each frame.</li>
-  <li>Forcing a refresh of the canvas element by resetting it's width every frame (Using <code>canvas.width = canvas.width+0</code>)</li>
+  <li>Forcing a refresh of the canvas element by resetting it’s width every frame (Using <code>canvas.width = canvas.width+0</code>)</li>
 </ul>
 <p>All of which you can experiment with in the above demo. None of these, however, improved clearing performance significantly.</p>
-<p>As a result of these tests, we've decided to ditch canvas as a viable option for fullscreen games on iOS.</p>
-<p>(And straight-up DOM manipulation via Javascript doesn't fare much better when you're doing anything more complicated than moving a handful of elements around.)</p>
+<p>As a result of these tests, we’ve decided to ditch canvas as a viable option for fullscreen games on iOS.</p>
+<p>(And straight-up DOM manipulation via Javascript doesn’t fare much better when you’re doing anything more complicated than moving a handful of elements around.)</p>
 <p>That only leaves one option for us: CSS transitions.</p>
 <p>Stay tuned...</p>

@@ -4,26 +4,24 @@
     }
 
 /* Avoiding flash of unstyled text in FF and IE */
-.wf-loading h1, .wf-loading h2, .wf-loading p {
+.wf-loading body {
     visibility: hidden;
     }
 
-.wf-active h1, .wf-active h2, .wf-active p,
-.wf-inactive h1, .wf-inactive h2, .wf-inactive p {
+.wf-active body, .wf-inactive body {
     visibility: visible;
     }
 
 body {
-    margin: 90px auto 60px;
+    margin: 8px auto;
     padding: 0 8px;
     max-width: 680px;
     color: #333;
     font-size: 16px;
-    line-height: 24px;
-    -webkit-text-size-adjust: 85%;
+    line-height: 1.5;
     }
 
-img, iframe, object, embed {
+img, iframe, video, object, embed {
     max-width: 100%;
     }
 
@@ -61,8 +59,7 @@ code {
     }
 
 header h1 {
-    line-height: 36px;
-    margin-bottom: 58px;
+    margin: 60px 0 20px;
     font-family: "ff-enzo-web-1","ff-enzo-web-2",sans-serif;
     font-size: 48px;
     font-weight: bold;
@@ -156,3 +153,15 @@ ol.footnotes li {
     font-size: 0.8em;
     color: #666;
     }
+
+@media screen and (max-height: 480px) {
+
+    html {
+        -webkit-text-size-adjust: 85%;
+        }
+
+    header h1 {
+        margin: 0 0 8px;
+    }
+
+}
