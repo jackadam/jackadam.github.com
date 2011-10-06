@@ -41,7 +41,7 @@ h2 {
     }
 
 article p, article ul, article ol, article dd, article pre, article hr {
-    margin-bottom: 24px;
+    margin-bottom: 1em;
     }
 
 body,
@@ -139,6 +139,10 @@ article small {
     font-size: 12px;
     line-height: 24px;
     font-family: "ff-enzo-web-1","ff-enzo-web-2",sans-serif;
+    }
+
+.read_more_link {
+    font-style: italic;
     }
 
 article .aligncenter {

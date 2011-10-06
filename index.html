@@ -8,6 +8,11 @@ layout: default
       Posted on <time>{{ post.date | date: "%B %e, %Y" }}</time>
       {% if post.author %} by {{ post.author }}{% endif %}
     </small>
-    {{ post.content }}
+    {% if post.excerpt %}
+      {{ post.excerpt }}
+      <p><a href="{{ post.url }}" class="read_more_link">Read more…</a></p>
+    {% else %}
+        {{ post.content }}
+    {% endif %}
   </article>
 {% endfor %}
