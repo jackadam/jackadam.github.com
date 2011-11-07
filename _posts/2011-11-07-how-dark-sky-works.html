@@ -4,6 +4,7 @@ title: How Dark Sky Works
 author: Adam Grossman
 published: false
 excerpt:  <p>A lot of people have been wondering how our weather prediction app, <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">Dark Sky</a>, works. In this post I’ll try to shed some light on what goes on under the hood.</p>
+          <p><iframe src="http://player.vimeo.com/video/31751453?title=0&amp;byline=0&amp;portrait=0" width="680" height="510" class="aligncenter" frameborder="0" webkitAllowFullScreen allowFullScreen></iframe></p>
 ---
 <p>
 <em>Dark Sky is a weather prediction and visualization app for the iPhone, iPad and iPod touch. For an overview, and to learn how you can help us, check out <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">our Kickstarter page.</a> </em>
@@ -112,7 +113,7 @@ The reason we encode velocity data as an image is so we can pass it off to the G
 I’m going to be a little vague here, since this part constitutes our “secret sauce”, and is the component of our system that is in most active development. So instead, here’s a pretty video of the app in action:
 </p>
 <p>
-[video of dark sky screencast]
+<iframe src="http://player.vimeo.com/video/31751453?title=0&amp;byline=0&amp;portrait=0" width="680" height="510" class="aligncenter" frameborder="0" webkitAllowFullScreen allowFullScreen></iframe>
 </p>
 
 <h2>Monitoring error</h2>
@@ -136,7 +137,7 @@ We are constantly doing this check in real time, for every radar station. This l
 So Dark Sky consists of a number of different moving parts that all need to fit together to create accurate predictions and pretty animations. This post glosses over many of the details, but I hope it helps get across the essential process and our approach to short-term weather forecasting.
 </p>
 <p>
-It’s very much a numerical & statistical approach, rather than a meteorological one. Since we’ve launched the Kickstarter project, we’ve had several people (many of them meteorologists) criticize it because it eschews physical modeling of atmospheric fluid dynamics in favor of a more “heuristicy” approach. And it’s true that our system will never be able to predict six hours in the future, let alone a day from now. But by focusing on the immediate future, and leaving everything beyond to the meteorologists, we can create a highly accurate app that is useful in a surprisingly wide range of applications.
+It’s very much a numerical & statistical approach, rather than a meteorological one. Since we’ve launched the Kickstarter project, we’ve had several people (many of them meteorologists) criticize it because it eschews physical modeling of atmospheric fluid dynamics. And it’s true that our system will never be able to predict six hours in the future, let alone a day from now. But by focusing on the immediate future, and leaving everything beyond to the meteorologists, we can create a highly accurate app that is useful in a surprisingly wide range of applications.
 </p>
 <p>
 So if you are excited by this as much as we are, please help us out by backing our Kickstarter project. Every dollar counts!
