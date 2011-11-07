@@ -1,0 +1,146 @@
+--- 
+layout: post
+title: How Dark Sky Works
+author: Adam Grossman
+published: false
+excerpt:  <p>A lot of people have been wondering how our weather prediction app, <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">Dark Sky</a>, works. In this post I'll try to shed some light on what goes on under the hood.</p>
+---
+<p>
+<em>Dark Sky is a weather prediction and visualization app for the iPhone, iPad and iPod touch. For an overview, and to learn how you can help us, check out <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">our Kickstarter page.</a> </em>
+</p>
+
+<p>
+A lot of people have been wondering how <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">Dark Sky</a> works. In this post I'll try to shed some light on what goes on under the hood.
+</p>
+
+<h3>Getting the data</h3>
+
+<p>
+All our radar data comes from the National Oceanic and Atmospheric Administration. NOAA <a href="http://radar.weather.gov">operates a network</a> of over 140 radar stations spread across the United States and its territories, and one of the advantages of being a US citizen is that you get access to this data for free. They're mandated by law to make their information public, but they go above and beyond by providing real-time access via the web and FTP.
+</p>
+<p>
+We <a href="http://www.nws.noaa.gov/tg/radfiles.html">download</a> the raw radar data in binary format. But if you're looking to get started playing around with weather radar, a better place to start is perhaps <a href="http://www.srh.noaa.gov/jetstream/doppler/ridge_download.htm">RIDGE</a>, which boils the raw data into color-coded images that are easier to work with.
+</p>
+
+<h3>Cleaning it up</h3>
+
+<p>
+Weather radar is noisy. There's lots of ground clutter, bug and bird migrations (!), and other artifacts that can be confused for precipitation. Here's an example:
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/1.jpg" />
+</p>
+<p>
+So we'll need to clean this up. How do we do it? Well, the noise mostly consists of low-intensity data -- the light blue areas. One technique (which <a href="http://egb13.net/2009/09/noise-removal-from-noaa-weather-radar/">this gentleman</a> writes more about), is to simply remove all low-intensity data. It clears away the noise, and leaves <em>most</em> of the actual precipitation data.
+</p>
+<p>
+However, for our purposes, "most" isn't good enough. By removing low-intensity data indiscriminately, we're removing valuable data from the leading and trailing edges of the storms. This data is crucially important if we're going to predict when it will start and stop raining. So we'll have to be a little more clever.
+</p>
+<p>
+After staring at enough radar images, it becomes pretty clear which signals are real precipitation data, and which are noise. Not only does noise tend to be low-intensity, but it has a recognizable "texture" which is distinct from actual storms. It's easy to see with the eyes, but hard to explicitly quantify or define. So how do we write a program to remove it? This type of I-know-it-when-I-see-it, but ill-defined situation is ripe for some machine learnin'.
+</p>
+<p>
+In this case, we opted for neural nets. Using the <a href="http://leenissen.dk/fann/wp/">Fast Artificial Neural Network</a> C-library, we trained a neural net with thousands of "blobs" of data hand-separated into two categories: noise, and not-noise.
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/2.jpg" />
+</p>
+<p>
+The training process takes a while to run but the end result is a small, blazing fast program that accurately identifies somewhere between 90% and 95% of the noise, with very few false positives.
+</p>
+<p>
+(To take care of the remainder, we spent an embarrassingly large amount of time and effort writing heuristic clean-up code by a tedious process of trial and error. But we're keeping that part secret, because the code is embarrassing ;-)
+</p>
+<p>
+The end result looks something like this:
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/3.jpg" />
+</p>
+
+<h3>Extracting storm velocity</h3>
+
+<p>
+Now that we have the radar data and we've cleaned it up, we come to the real meat of the app: velocity extraction.
+</p>
+<p>
+But first, let me talk a little about the philosophy of our approach...
+</p>
+<p>
+Weather is chaotic. It's the quintessential non-linear dynamical system. Complicated fluid dynamics combined with a spinning globe, uneven terrain, and energy pumped into the system from the sun makes the weather extremely hard to predict with any accuracy. Meteorologists have spent a century coming up with increasingly sophisticated models and they still can't reliably talk about the weather -- even generally -- much more than a week in advance.
+</p>
+<p>
+So how can we justify our claim of being able to predict precipitation down to the very minute?
+</p>
+<p>
+Well, here's the thing: while the weather becomes chaotic and unpredictable at large timescales (hours to days), its behavior becomes increasingly linear at smaller and smaller timescales. To see this in action, take a look at cumulus clouds drifting across the sky. They tend to move in relatively straight lines:
+</p>
+<p>
+<iframe width="640" height="360" class="aligncenter" src="http://www.youtube.com/embed/p6qPJAmmQ8A?rel=0&amp;hd=1" frameborder="0" allowfullscreen></iframe>
+</p>
+<p>
+We've found that precipitation bands are even more coherent and behave approximately linearly over the course of minutes, and in many cases up to an hour or more. So how do we go about quantifying this linear motion? Math, that's how!
+</p>
+<p>
+We use various computer vision algorithms to compare multiple radar image frames and create a map of velocity. Specifically, we use <a href="http://opencv.willowgarage.com/wiki/">OpenCV</a>, an open-source computer vision library, which comes with a number of optical flow and object tracking algorithms (for a great introduction to the topic and to see some sample code, check out <a href="http://robots.stanford.edu/cs223b05/notes/CS%20223-B%20T1%20stavens_opencv_optical_flow.pdf">this tutorial</a> by David Stavens at the Stanford AI Labs).
+</p>
+<p>
+The end result looks something like this:
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/4.jpg" />
+</p>
+<p>
+Actually, we don't draw little arrows. Instead, we encode the velocity in a more useful form: colors. We create a 3-channel image where the red channel represents velocity in the x-direction, the blue channel represents velocity in the y-direction, and the green channel represents change in storm intensity:
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/5.png" />
+</p>
+<p>
+(If you're so inclined, open the image in Photoshop and check out the color channels individually)
+</p>
+
+<h3>Prediction and Interpolation</h3>
+
+<p>
+So, now that we've extracted storm velocity, it's time to use it to predict the future!
+</p>
+<p>
+The reason we encode velocity data as an image is so we can pass it off to the GPU on the iPhone and iPad. Both the storm prediction and the smooth animations are calculated on the device itself, rather than the server, and all the magic happens directly on the GPU.
+</p>
+<p>
+I'm going to be a little vague here, since this part constitutes our "secret sauce", and is the component of our system that is in most active development. So instead, here's a pretty video of the app in action:
+</p>
+<p>
+[video of dark sky screencast]
+</p>
+
+<h3>Monitoring error</h3>
+
+<p>
+A prediction is worthless unless it is not only accurate, but <em>reliably</em> accurate. A large amount of our effort is focused on measuring the error rate of Dark Sky predictions. Some storms are more coherent and stable than others, so how far into the future we can project varies over time and at different geographical locations.
+</p>
+<p>
+Whenever we process a new radar image, we go back to previous images and project them forward, creating a map of what we <em>think</em> the storm will look like in the present. We then compare this with the latest radar image to see how close we got.
+</p>
+<p>
+<img class="aligncenter" src="/images/how-dark-sky-works/6.gif" />
+</p>
+<p>
+We are constantly doing this check in real time, for every radar station. This lets us monitor our accuracy, and helps us quantify how effective future improvements are.
+</p>
+
+<h3>In conclusion...</h3>
+
+<p>
+So Dark Sky consists of a number of different moving parts that all need to fit together to create accurate predictions and pretty animations. This post glosses over many of the details, but I hope it helps get across the essential process and our approach to short-term weather forecasting.
+</p>
+<p>
+It's very much a numerical & statistical approach, rather than a meteorological one. Since we've launched the Kickstarter project, we've had several people (many of them meteorologists) criticize it because it eschews physical modeling of atmospheric fluid dynamics in favor of a more "heuristicy" approach. And it's true that our system will never be able to predict six hours in the future, let alone a day from now. But by focusing on the immediate future, and leaving everything beyond to the meteorologists, we can create a highly accurate app that is useful in a surprisingly wide range of applications.
+</p>
+<p>
+So if you are excited by this as much as we are, please help us out by backing our Kickstarter project. Every dollar counts!
+</p>
+<p>
+<a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali</a>
+</p>
