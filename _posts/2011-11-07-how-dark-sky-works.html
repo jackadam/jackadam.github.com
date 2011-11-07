@@ -13,7 +13,7 @@ excerpt:  <p>A lot of people have been wondering how our weather prediction app,
 A lot of people have been wondering how <a href="http://www.kickstarter.com/projects/jackadam/dark-sky-hyperlocal-weather-prediction-and-visuali">Dark Sky</a> works. In this post I'll try to shed some light on what goes on under the hood.
 </p>
 
-<h3>Getting the data</h3>
+<h2>Getting the data</h2>
 
 <p>
 All our radar data comes from the National Oceanic and Atmospheric Administration. NOAA <a href="http://radar.weather.gov">operates a network</a> of over 140 radar stations spread across the United States and its territories, and one of the advantages of being a US citizen is that you get access to this data for free. They're mandated by law to make their information public, but they go above and beyond by providing real-time access via the web and FTP.
@@ -22,7 +22,7 @@ All our radar data comes from the National Oceanic and Atmospheric Administratio
 We <a href="http://www.nws.noaa.gov/tg/radfiles.html">download</a> the raw radar data in binary format. But if you're looking to get started playing around with weather radar, a better place to start is perhaps <a href="http://www.srh.noaa.gov/jetstream/doppler/ridge_download.htm">RIDGE</a>, which boils the raw data into color-coded images that are easier to work with.
 </p>
 
-<h3>Cleaning it up</h3>
+<h2>Cleaning it up</h2>
 
 <p>
 Weather radar is noisy. There's lots of ground clutter, bug and bird migrations (!), and other artifacts that can be confused for precipitation. Here's an example:
@@ -58,7 +58,7 @@ The end result looks something like this:
 <img class="aligncenter" src="/images/how-dark-sky-works/3.jpg" />
 </p>
 
-<h3>Extracting storm velocity</h3>
+<h2>Extracting storm velocity</h2>
 
 <p>
 Now that we have the radar data and we've cleaned it up, we come to the real meat of the app: velocity extraction.
@@ -100,7 +100,7 @@ Actually, we don't draw little arrows. Instead, we encode the velocity in a more
 (If you're so inclined, open the image in Photoshop and check out the color channels individually)
 </p>
 
-<h3>Prediction and Interpolation</h3>
+<h2>Prediction and Interpolation</h2>
 
 <p>
 So, now that we've extracted storm velocity, it's time to use it to predict the future!
@@ -115,7 +115,7 @@ I'm going to be a little vague here, since this part constitutes our "secret sau
 [video of dark sky screencast]
 </p>
 
-<h3>Monitoring error</h3>
+<h2>Monitoring error</h2>
 
 <p>
 A prediction is worthless unless it is not only accurate, but <em>reliably</em> accurate. A large amount of our effort is focused on measuring the error rate of Dark Sky predictions. Some storms are more coherent and stable than others, so how far into the future we can project varies over time and at different geographical locations.
@@ -130,7 +130,7 @@ Whenever we process a new radar image, we go back to previous images and project
 We are constantly doing this check in real time, for every radar station. This lets us monitor our accuracy, and helps us quantify how effective future improvements are.
 </p>
 
-<h3>In conclusion...</h3>
+<h2>In conclusion...</h2>
 
 <p>
 So Dark Sky consists of a number of different moving parts that all need to fit together to create accurate predictions and pretty animations. This post glosses over many of the details, but I hope it helps get across the essential process and our approach to short-term weather forecasting.
